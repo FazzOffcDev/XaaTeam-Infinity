@@ -17,7 +17,7 @@ const sessions_dir = "./auth";
 const PORT = config.port;
 const file = "./akses.json";
 // ** GANTI DENGAN TOKEN GITHUB ANDA (Harus punya scope 'repo') **
-const GITHUB_TOKEN = "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"; 
+const GITHUB_TOKEN = process.env.GITHUB_TOKEN; 
 const REPO_OWNER = "FazzOffcDev"; // Nama pengguna pemilik repo
 const REPO_NAME = "XaaTeam-Infinity"; // Nama repository
 const REPO_BRANCH = "main"; // Nama branch utama
