@@ -19,7 +19,7 @@ const file = "./akses.json";
 // ** GANTI DENGAN TOKEN GITHUB ANDA (Harus punya scope 'repo') **
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN; 
 // Contoh di bot.js atau githubStore.js
-const GITHUB_TOKEN = process.env.GITHUB_TOKEN; 
+const GITHUBJembut = process.env.GITHUB_TOKEN; 
 
 if (!GITHUB_TOKEN) {
     console.error("⛔ KRITIS: GITHUB_TOKEN TIDAK TERDEFINISI DI LINGKUNGAN (VERCEL)");
