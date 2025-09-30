@@ -3208,3 +3208,5 @@ app.get("/logout", (req, res) => {
 app.listen(PORT, () => {
   console.log(`${chalk.green('Server Active On Port')} ${VPS}:${PORT}`);
 });
+
+module.exports = app;
