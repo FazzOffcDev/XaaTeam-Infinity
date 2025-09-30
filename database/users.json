@@ -1,1 +1,8 @@
-[]
+[
+  {
+    "username": "fazz",
+    "password": "fazzz",
+    "expired": 1761827381254,
+    "role": "user"
+  }
+]
