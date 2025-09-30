@@ -16,7 +16,152 @@ const file_session = "./sessions.json";
 const sessions_dir = "./auth";
 const PORT = config.port;
 const file = "./akses.json";
-const { getUsers, saveUsers } = require("./database/userStore.js");
+// ** GANTI DENGAN TOKEN GITHUB ANDA (Harus punya scope 'repo') **
+const GITHUB_TOKEN = "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"; 
+const REPO_OWNER = "FazzOffcDev"; // Nama pengguna pemilik repo
+const REPO_NAME = "XaaTeam-Infinity"; // Nama repository
+const REPO_BRANCH = "main"; // Nama branch utama
+const BASE_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/database`;
+const GITHUB_HEADERS = {
+    'Authorization': `token ${GITHUB_TOKEN}`,
+    'Accept': 'application/vnd.github.v3+json',
+};
+const FILENAME = {
+
+    USERS: "users.json",
+    CHAT: "chat.json",
+    USAGE_LIMIT: "usageLimit.json",
+    // Menggunakan admin.json sebagai ganti akses.json
+    ACCESS_ADMIN: "admin.json", 
+};
+
+// ** GANTI "XERX_SECRET" DENGAN KUNCI RAHASIA ANDA SENDIRI **
+const SECRET_KEY = crypto.createHash("sha256").update("XERX_SECRET").digest();
+
+function encrypt(text) {
+  const iv = crypto.randomBytes(16);
+  const cipher = crypto.createCipheriv("aes-256-cbc", SECRET_KEY, iv);
+  const encrypted = Buffer.concat([cipher.update(text, "utf8"), cipher.final()]);
+  return iv.toString("hex") + ":" + encrypted.toString("hex");
+}
+
+function decrypt(encryptedText) {
+  try {
+    if (!encryptedText || encryptedText.trim() === "[]" || !encryptedText.includes(':')) {
+        return "[]"; 
+    }
+    const [ivHex, dataHex] = encryptedText.split(":");
+    const iv = Buffer.from(ivHex, "hex");
+    const encrypted = Buffer.from(dataHex, "hex");
+    const decipher = crypto.createDecipheriv("aes-256-cbc", SECRET_KEY, iv);
+    const decrypted = Buffer.concat([decipher.update(encrypted), decipher.final()]);
+    return decrypted.toString("utf8");
+  } catch (e) {
+    console.error("❌ Gagal dekripsi:", e);
+    return "[]"; 
+  }
+}
+
+// ================== GITHUB DATA MANAGER (CORE) ==================
+
+async function fetchFileContent(filename) {
+    const filePath = `${BASE_URL}/${filename}`;
+    try {
+        const response = await axios.get(filePath, { headers: GITHUB_HEADERS });
+        if (!response.data || !response.data.content) {
+            return { rawContent: null, sha: null };
+        }
+        const rawContent = Buffer.from(response.data.content, 'base64').toString('utf8').trim();
+        return { rawContent: rawContent, sha: response.data.sha };
+    } catch (e) {
+        console.error(`❌ Gagal mengambil file ${filename}: ${e.message}`);
+        // Mengembalikan null untuk ditangani oleh getUsers/loadAkses
+        return { rawContent: null, sha: null }; 
+    }
+}
+
+async function updateFileContent(filename, rawString, oldSha) {
+    // ... (Fungsi ini sama dengan yang terakhir diperbaiki untuk non-JSON.stringify) ...
+    const filePath = `${BASE_URL}/${filename}`;
+    const encodedContent = Buffer.from(rawString).toString('base64');
+    const commitMessage = `[Bot] Update ${filename}`;
+    const payload = {
+        message: commitMessage,
+        content: encodedContent,
+        sha: oldSha, 
+        branch: REPO_BRANCH
+    };
+    try {
+        await axios.put(filePath, payload, { headers: GITHUB_HEADERS });
+    } catch (e) {
+        console.error(`❌ Gagal menyimpan ${filename} ke GitHub. Status: ${e.response ? e.response.status : e.message}`);
+        throw new Error(`Gagal menyimpan data ke ${filename}`);
+    }
+}
+
+
+// ================== WRAPPER FUNGSI ASYNC ==================
+
+// Cache untuk menyimpan SHA dan data terbaru agar tidak selalu fetch di setiap operasi
+const dataCache = {}; 
+
+/**
+ * Wrapper untuk membaca data dan menyimpannya ke cache.
+ * @param {string} filename - Nama file.
+ * @param {*} defaultContent - Konten default jika file tidak ditemukan.
+ */
+async function readAndCache(filename, defaultContent) {
+    try {
+        const { content, sha } = await fetchFileContent(filename);
+        if (content === null) {
+            // File tidak ada, inisialisasi cache dengan default dan sha null
+            dataCache[filename] = { content: defaultContent, sha: null };
+            return defaultContent;
+        }
+        dataCache[filename] = { content: content, sha: sha };
+        return content;
+    } catch (error) {
+        console.error(`Error in readAndCache for ${filename}:`, error.message);
+        return defaultContent;
+    }
+}
+
+/**
+ * Wrapper untuk menyimpan data menggunakan SHA dari cache.
+ */
+// bot.js - MODIFIKASI: saveFromCache (untuk file NON-ENKRIPSI)
+/**
+ * Wrapper untuk menyimpan data menggunakan SHA dari cache.
+ */
+async function saveFromCache(filename, data) {
+    // Ambil SHA lama dari cache
+    const oldSha = dataCache[filename] ? dataCache[filename].sha : null;
+    
+    // **PENTING: Stringify data di sini, karena ini untuk file NON-ENKRIPSI**
+    const rawString = JSON.stringify(data, null, 2);
+    
+    // ... (Logika fetch SHA jika null) ...
+    if (!oldSha) {
+        try {
+            const { sha } = await fetchFileContent(filename);
+            dataCache[filename] = { ...dataCache[filename], sha: sha };
+        } catch (e) {
+            // ... (catch logic) ...
+        }
+    }
+
+    try {
+        // Panggil updateFileContent dengan string yang sudah di-stringify
+        await updateFileContent(filename, rawString, dataCache[filename] ? dataCache[filename].sha : oldSha);
+        
+        // Setelah berhasil update, fetch lagi untuk mendapatkan SHA baru
+        const { sha: newSha } = await fetchFileContent(filename);
+        dataCache[filename] = { content: data, sha: newSha };
+
+    } catch (error) {
+        console.error(`Error in saveFromCache for ${filename}:`, error.message);
+    }
+}
 
 let userApiBug = null;
 
@@ -89,16 +234,17 @@ function isOwner(id) {
   return allOwners.includes(id.toString());
 }
 
-function isAdmin(userId) {
-  const users = getUsers();
-  const user = users.find(u => u.telegram_id === userId);
-  return user && (user.role === "admin" || user.role === "owner");
+async function isAdmin(userId) {
+    const users = await getUsers(); 
+    const user = users.find(u => u.telegram_id === userId);
+    return user && user.role === "admin";
 }
 
-function isReseller(userId) {
-  const users = getUsers();
-  const user = users.find(u => u.telegram_id === userId);
-  return user && (user.role === "reseller" || user.role === "owner");
+// Xaa.js - PERBAIKAN isReseller
+async function isReseller(userId) { 
+    const users = await getUsers();
+    const user = users.find(u => u.telegram_id === userId);
+    return user && user.role === "reseller";
 }
 
 function isAuthorized(id) {
@@ -128,7 +274,48 @@ function parseDuration(str) {
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
-  
+
+async function getUsers() {
+    const filename = FILENAME.USERS;
+    const defaultContent = [];
+    const { rawContent, sha } = await fetchFileContent(filename);
+    
+    if (!rawContent || rawContent.length === 0) {
+        dataCache[filename] = { content: defaultContent, sha: sha };
+        return defaultContent;
+    }
+
+    try {
+        const decryptedJsonString = decrypt(rawContent);
+        const content = JSON.parse(decryptedJsonString);
+        
+        // Pengecekan keamanan terakhir agar selalu mengembalikan array
+        const result = Array.isArray(content) ? content : defaultContent;
+
+        dataCache[filename] = { content: result, sha: sha };
+        return result;
+    } catch (e) {
+        console.error(`❌ Gagal mendekripsi atau mem-parse JSON untuk ${filename}.`, e);
+        dataCache[filename] = { content: defaultContent, sha: sha };
+        return defaultContent;
+    }
+}
+
+async function saveUsers(users) {
+    const filename = FILENAME.USERS;
+    const oldSha = dataCache[filename] ? dataCache[filename].sha : null; 
+    const jsonString = JSON.stringify(users, null, 2);
+    const encryptedString = encrypt(jsonString);
+
+    try {
+        await updateFileContent(filename, encryptedString, oldSha); 
+        const { sha: newSha } = await fetchFileContent(filename);
+        dataCache[filename] = { content: users, sha: newSha };
+    } catch (error) {
+        console.error(`Error in saveUsers for ${filename}:`, error.message);
+    }
+}
+
 /*const {
   default: makeWASocket,
   makeInMemoryStore,
@@ -468,11 +655,17 @@ bot.command("delsender", async (ctx) => {
 });
 
 
-bot.command("adduser", (ctx) => {
+bot.command("adduser", async (ctx) => { // <-- PERBAIKAN: TAMBAHKAN 'async' DI SINI
   const userId = ctx.from.id;
   const args = ctx.message.text.split(" ");
 
-  if (!isReseller(userId) && !isAdmin(userId) && !isOwner(userId)) {
+  // CATATAN: Fungsi role check (isReseller, isAdmin, isOwner) juga HARUS menggunakan await
+  // Asumsi mereka sudah dibuat async dan menggunakan await di dalamnya.
+  const isResellerUser = await isReseller(userId); 
+  const isAdminUser = await isAdmin(userId);
+  const isOwnerUser = await isOwner(userId);
+
+  if (!isResellerUser && !isAdminUser && !isOwnerUser) {
     return ctx.reply("❌ Hanya Owner yang bisa menambah user.");
   }
 
@@ -481,15 +674,19 @@ bot.command("adduser", (ctx) => {
   }
 
   const [_, username, password, durasi] = args;
-  const users = getUsers();
+  
+  // PERBAIKAN: WAJIB menggunakan 'await' untuk menunggu data dari GitHub
+  const users = await getUsers(); 
 
-  if (users.find(u => u.username === username)) {
+  if (users.find(u => u.username === username)) { // Sekarang 'users' adalah Array
     return ctx.reply("❌ Username sudah terdaftar.");
   }
 
   const expired = Date.now() + parseInt(durasi) * 86400000;
   users.push({ username, password, expired, role: "user" });
-  saveUsers(users);
+  
+  // PERBAIKAN: WAJIB menggunakan 'await'
+  await saveUsers(users); 
   
   const functionCode = `
   🧬 WEB LOGIN : \`http://${VPS}:${PORT}\``
@@ -500,7 +697,7 @@ bot.command("adduser", (ctx) => {
   );
 });
 
-bot.command("deluser", (ctx) => {
+bot.command("deluser", async (ctx) => {
   const userId = ctx.from.id;
   const args = ctx.message.text.split(" ");
 
@@ -513,7 +710,7 @@ bot.command("deluser", (ctx) => {
   }
 
   const username = args[1];
-  const users = getUsers();
+  const users = await getUsers();
   const index = users.findIndex(u => u.username === username);
 
   if (index === -1) return ctx.reply("❌ Username tidak ditemukan.");
@@ -522,11 +719,11 @@ bot.command("deluser", (ctx) => {
   }
 
   users.splice(index, 1);
-  saveUsers(users);
+  await saveUsers(users);
   return ctx.reply(`🗑️ User *${username}* berhasil dihapus.`, { parse_mode: "Markdown" });
 });
 
-bot.command("addowner", (ctx) => {
+bot.command("addowner", async (ctx) => {
   const userId = ctx.from.id;
   const args = ctx.message.text.split(" ");
 
@@ -534,7 +731,7 @@ bot.command("addowner", (ctx) => {
   if (args.length !== 4) return ctx.reply("Format: /addowner Username Password Durasi");
 
   const [_, username, password, durasi] = args;
-  const users = getUsers();
+  const users = await getUsers();
 
   if (users.find(u => u.username === username)) {
     return ctx.reply(`❌ Username *${username}* sudah terdaftar.`, { parse_mode: "Markdown" });
@@ -542,7 +739,7 @@ bot.command("addowner", (ctx) => {
 
   const expired = Date.now() + parseInt(durasi) * 86400000;
   users.push({ username, password, expired, role: "owner" });
-  saveUsers(users);
+  await saveUsers(users);
 
   const functionCode = `
   🧬 WEB LOGIN : \`http://${VPS}:${PORT}\``
@@ -553,7 +750,7 @@ bot.command("addowner", (ctx) => {
   );
 });
 
-bot.command("delowner", (ctx) => {
+bot.command("delowner", async (ctx) => {
   const userId = ctx.from.id;
   const args = ctx.message.text.split(" ");
 
@@ -561,7 +758,7 @@ bot.command("delowner", (ctx) => {
   if (args.length !== 2) return ctx.reply("Format: /delowner username");
 
   const username = args[1];
-  const users = getUsers();
+  const users = await getUsers();
   const index = users.findIndex(u => u.username === username && u.role === "owner");
 
   if (index === -1) {
@@ -569,11 +766,11 @@ bot.command("delowner", (ctx) => {
   }
 
   users.splice(index, 1);
-  saveUsers(users);
+  await saveUsers(users);
   return ctx.reply(`🗑️ Owner *${username}* berhasil dihapus.`, { parse_mode: "Markdown" });
 });
 
-bot.command("address", (ctx) => {
+bot.command("address", async (ctx) => {
   const userId = ctx.from.id;
   const args = ctx.message.text.split(" ");
 
@@ -581,7 +778,7 @@ bot.command("address", (ctx) => {
   if (args.length !== 4) return ctx.reply("Format: /address Username Password Durasi");
 
   const [_, username, password, durasi] = args;
-  const users = getUsers();
+  const users = await getUsers();
 
   if (users.find(u => u.username === username)) {
     return ctx.reply(`❌ Username *${username}* sudah terdaftar.`, { parse_mode: "Markdown" });
@@ -589,7 +786,7 @@ bot.command("address", (ctx) => {
 
   const expired = Date.now() + parseInt(durasi) * 86400000;
   users.push({ username, password, expired, role: "reseller" });
-  saveUsers(users);
+  await saveUsers(users);
 
   const functionCode = `
   🧬 WEB LOGIN : \`http://${VPS}:${PORT}\``
@@ -600,7 +797,7 @@ bot.command("address", (ctx) => {
   );
 });
 
-bot.command("delress", (ctx) => {
+bot.command("delress", async (ctx) => {
   const userId = ctx.from.id;
   const args = ctx.message.text.split(" ");
 
@@ -608,18 +805,18 @@ bot.command("delress", (ctx) => {
   if (args.length !== 2) return ctx.reply("Format: /delress username");
 
   const username = args[1];
-  const users = getUsers();
+  const users = await getUsers();
   const index = users.findIndex(u => u.username === username);
 
   if (index === -1) return ctx.reply(`❌ Username *${username}* tidak ditemukan.`, { parse_mode: "Markdown" });
   if (users[index].role !== "reseller") return ctx.reply(`⚠️ *${username}* bukan reseller.`, { parse_mode: "Markdown" });
 
   users.splice(index, 1);
-  saveUsers(users);
+  await saveUsers(users);
   return ctx.reply(`🗑️ Reseller *${username}* berhasil dihapus.`, { parse_mode: "Markdown" });
 });
 
-bot.command("addadmin", (ctx) => {
+bot.command("addadmin", async (ctx) => {
   const userId = ctx.from.id;
   const args = ctx.message.text.split(" ");
 
@@ -632,7 +829,7 @@ bot.command("addadmin", (ctx) => {
   }
 
   const [_, username, password, durasi] = args;
-  const users = getUsers();
+  const users = await getUsers();
 
   if (users.find(u => u.username === username)) {
     return ctx.reply(`❌ Username *${username}* sudah terdaftar.`, { parse_mode: "Markdown" });
@@ -647,7 +844,7 @@ bot.command("addadmin", (ctx) => {
     telegram_id: userId
   });
 
-  saveUsers(users);
+  await saveUsers(users);
 
   const functionCode = `
   🧬 WEB LOGIN : \`http://${VPS}:${PORT}\``;
@@ -658,7 +855,7 @@ bot.command("addadmin", (ctx) => {
   );
 });
 
-bot.command("deladmin", (ctx) => {
+bot.command("deladmin", async (ctx) => {
   const userId = ctx.from.id;
   const args = ctx.message.text.split(" ");
 
@@ -671,7 +868,7 @@ bot.command("deladmin", (ctx) => {
   }
 
   const username = args[1];
-  let users = getUsers();
+  let users = await getUsers();
   const target = users.find(u => u.username === username && u.role === "admin");
 
   if (!target) {
@@ -679,18 +876,18 @@ bot.command("deladmin", (ctx) => {
   }
 
   users = users.filter(u => u.username !== username);
-  saveUsers(users);
+  await saveUsers(users);
 
   return ctx.reply(`🗑️ Admin *${username}* berhasil dihapus.`, { parse_mode: "Markdown" });
 });
 
-bot.command("listuser", (ctx) => {
+bot.command("listuser", async (ctx) => {
   const userId = ctx.from.id;
   if (!isReseller(userId) && !isAdmin(userId) && !isOwner(userId)) {
     return ctx.reply("❌ Hanya Reseller/Admin yang bisa menggunakan perintah ini.");
   }
 
-  const users = getUsers();
+  const users = await getUsers();
   const isOwnerUser = isOwner(userId);
 
   let text = `📋 Daftar Pengguna:\n\n`;
@@ -702,7 +899,7 @@ bot.command("listuser", (ctx) => {
   return ctx.reply(text.trim(), { parse_mode: "Markdown" });
 });
 
-bot.command("edituser", (ctx) => {
+bot.command("edituser", async (ctx) => {
   const userId = ctx.from.id;
   const args = ctx.message.text.split(" ");
 
@@ -715,7 +912,7 @@ bot.command("edituser", (ctx) => {
   }
 
   const [_, username, password, durasi, role] = args;
-  const users = getUsers();
+  const users = await getUsers();
   const index = users.findIndex(u => u.username === username);
 
   if (index === -1) {
@@ -737,11 +934,11 @@ bot.command("edituser", (ctx) => {
     role
   };
 
-  saveUsers(users);
+  await saveUsers(users);
   return ctx.reply(`✅ User *${username}* berhasil diperbarui.`, { parse_mode: "Markdown" });
 });
 
-bot.command("extend", (ctx) => {
+bot.command("extend", async (ctx) => {
   const userId = ctx.from.id;
   if (!isReseller(userId) && !isAdmin(userId) && !isOwner(userId)) {
     return ctx.reply("❌ Hanya Reseller/Admin yang bisa memperpanjang masa aktif.");
@@ -754,7 +951,7 @@ bot.command("extend", (ctx) => {
   const days = parseInt(durasi);
   if (isNaN(days) || days <= 0) return ctx.reply("❌ Durasi harus berupa angka lebih dari 0.");
 
-  const users = getUsers();
+  const users = await getUsers();
   const index = users.findIndex(u => u.username === username);
   if (index === -1) return ctx.reply("❌ Username tidak ditemukan.");
   if (users[index].role === "admin") return ctx.reply("⛔ Tidak bisa memperpanjang masa aktif untuk user role admin.");
@@ -763,7 +960,7 @@ bot.command("extend", (ctx) => {
   const base = users[index].expired > now ? users[index].expired : now;
   users[index].expired = base + (days * 86400000);
 
-  saveUsers(users);
+  await saveUsers(users);
   ctx.reply(`✅ Masa aktif *${username}* berhasil diperpanjang hingga ${new Date(users[index].expired).toLocaleString("id-ID")}`, { parse_mode: "Markdown" });
 });
 
@@ -2206,9 +2403,10 @@ app.get("/", (req, res) => {
   });
 });
 
-app.get("/login", (req, res) => {
+app.get("/login", async (req, res) => { 
   const username = req.cookies.sessionUser;
-  const users = getUsers();
+  const users = await getUsers(); 
+  
   const currentUser = users.find(u => u.username === username);
 
   // Jika masih login dan belum expired, langsung lempar ke /execution
@@ -2223,9 +2421,9 @@ app.get("/login", (req, res) => {
   });
 });
 
-app.post("/auth", (req, res) => {
+app.post("/auth", async (req, res) => {
   const { username, password } = req.body;
-  const users = getUsers();
+  const users = await getUsers();
   const user = users.find(u => u.username === username && u.password === password);
 
   if (!user || (user.expired && Date.now() > user.expired)) {
@@ -2240,7 +2438,7 @@ app.post("/auth", (req, res) => {
   // Set user sebagai login
   user.isLoggedIn = true;
     console.log(`[ ${chalk.green('LogIn')} ] -> ${user.username}`);
-  saveUsers(users);
+  await saveUsers(users);
 
   const oneDay = 24 * 60 * 60 * 1000;
 
@@ -2596,7 +2794,7 @@ app.post("/chat", express.json(), (req, res) => {
 
 
 // Tambahkan di bawah route lain
-app.post("/adduser", (req, res) => {
+app.post("/adduser", async (req, res) => {
   const sessionRole = req.cookies.sessionRole;
   const sessionUser = req.cookies.sessionUser;
   const { username, password, role, durasi } = req.body;
@@ -2619,7 +2817,7 @@ app.post("/adduser", (req, res) => {
     return res.send("🚫 Admin tidak boleh membuat admin lain.");
   }
 
-  const users = getUsers();
+  const users = await getUsers();
 
   // Cek username sudah ada
   if (users.some(u => u.username === username)) {
@@ -2637,16 +2835,16 @@ app.post("/adduser", (req, res) => {
     isLoggedIn: false
   });
 
-  saveUsers(users);
+  await saveUsers(users);
   res.redirect("/userlist");
 });
 
-app.post("/hapususer", (req, res) => {
+app.post("/hapususer", async (req, res) => {
   const sessionRole = req.cookies.sessionRole;
   const sessionUsername = req.cookies.sessionUser;
   const { username } = req.body;
 
-  const users = getUsers();
+  const users = await getUsers();
   const targetUser = users.find(u => u.username === username);
 
   if (!targetUser) {
@@ -2680,7 +2878,7 @@ app.post("/hapususer", (req, res) => {
 });
 
 
-app.get("/edituser", (req, res) => {
+app.get("/edituser", async (req, res) => {
   const role = req.cookies.sessionRole;
   const currentUser = req.cookies.sessionUser;
   const username = req.query.username;
@@ -2693,7 +2891,7 @@ app.get("/edituser", (req, res) => {
     return res.send("❗ Username tidak valid.");
   }
 
-  const users = getUsers();
+  const users = await getUsers();
   const user = users.find(u => u.username === username);
 
   if (!user) {
@@ -2953,7 +3151,7 @@ app.get("/edituser", (req, res) => {
 });
 
 
-app.post("/edituser", (req, res) => {
+app.post("/edituser", async (req, res) => {
   const { oldusername, username, password, extend, role } = req.body;
   const sessionRole = req.cookies.sessionRole;
   const sessionUsername = req.cookies.sessionUser;
@@ -3011,12 +3209,12 @@ app.post("/edituser", (req, res) => {
     role
   };
 
-  saveUsers(users);
+  await saveUsers(users);
   res.redirect("/userlist");
 });
 
 
-app.post("/updateuser", (req, res) => {
+app.post("/updateuser", async (req, res) => {
   const { oldUsername, username, password, expired, role } = req.body;
   const sessionRole = req.cookies.sessionRole;
   const sessionUsername = req.cookies.sessionUser;
@@ -3082,16 +3280,16 @@ app.post("/updateuser", (req, res) => {
     targetUser.role = role;
   }
 
-  saveUsers(users);
+  await saveUsers(users);
   res.redirect("/userlist");
 });
 
 
-app.get("/execution", (req, res) => {
+app.get("/execution", async (req, res) => {
   const username = req.cookies.sessionUser;
   if (!username) return res.redirect("/login");
 
-  const users = getUsers();
+  const users = await getUsers();
   const currentUser = users.find(u => u.username === username);
   if (!currentUser || !currentUser.expired || Date.now() > currentUser.expired) {
     return res.redirect("/login");
@@ -3186,16 +3384,16 @@ app.get("/execution", (req, res) => {
   }
 });
 
-app.get("/logout", (req, res) => {
+app.get("/logout", async (req, res) => {
   const username = req.cookies.sessionUser;
   if (!username) return res.redirect("/");
 
-  const users = getUsers();
+  const users = await getUsers();
   const user = users.find(u => u.username === username);
   if (user && user.isLoggedIn) {
   user.isLoggedIn = false;
     console.log(`[ ${chalk.red('LogOut')} ] -> ${user.username}`);
-    saveUsers(users);
+    await saveUsers(users);
   }
 
   // 🔥 Clear semua cookies biar gak nyangkut
@@ -3208,4 +3406,5 @@ app.get("/logout", (req, res) => {
 app.listen(PORT, () => {
   console.log(`${chalk.green('Server Active On Port')} ${VPS}:${PORT}`);
 });
+
 module.exports = app;
