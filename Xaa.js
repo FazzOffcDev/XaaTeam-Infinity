@@ -18,6 +18,15 @@ const PORT = config.port;
 const file = "./akses.json";
 // ** GANTI DENGAN TOKEN GITHUB ANDA (Harus punya scope 'repo') **
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN; 
+// Contoh di bot.js atau githubStore.js
+const GITHUB_TOKEN = process.env.GITHUB_TOKEN; 
+
+if (!GITHUB_TOKEN) {
+    console.error("⛔ KRITIS: GITHUB_TOKEN TIDAK TERDEFINISI DI LINGKUNGAN (VERCEL)");
+} else {
+    // Tampilkan 4 karakter pertama token (untuk memastikan tidak kosong)
+    console.log(`✅ Token ditemukan. Awal token: ${GITHUB_TOKEN.substring(0, 4)}`);
+}
 const REPO_OWNER = "FazzOffcDev"; // Nama pengguna pemilik repo
 const REPO_NAME = "XaaTeam-Infinity"; // Nama repository
 const REPO_BRANCH = "main"; // Nama branch utama
