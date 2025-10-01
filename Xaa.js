@@ -1424,6 +1424,7 @@ body.sidebar-open { padding-left: 220px; }
   border: 1px solid rgba(0, 14, 255, 0.3);
   border-radius: 12px;
   padding: 20px;
+  width: 500px;
   margin-bottom: 20px;
   backdrop-filter: blur(6px);
   box-shadow: 0 0 20px rgba(0, 17, 255, 0.2);
@@ -1853,10 +1854,6 @@ input[type="text"] {
       <a href="#" onclick="showSection('home-section')"><i class="fas fa-home"></i> Dashboard</a>
       <a href="#" onclick="showSection('bug-section')"><i class="fa fa-bug"></i> Bug Menu</a>
       <a href="#" onclick="showSection('tracking-section')"><i class="fa fa-search"></i> IP Tracker</a>
-      <a href="#" onclick="showSection('nik-section')">
-    <i class="fa fa-id-card"></i> Cek NIK</a>
-      <a href="#" onclick="showSection('chat-section')"><i class="fa fa-comments"></i> Chat</a>
-      <a href="#" onclick="showSection('music-section')"><i class="fa fa-music"></i> Music</a>
       <a href="/userlist"><i class="fas fa-users-cog"></i> Manage User</a>
     </div>
   </div>
@@ -1875,14 +1872,17 @@ input[type="text"] {
 
     <!-- Profil Banner -->
     <div class="profile-card">
-      <img class="profile-banner" src="https://i.ibb.co.com/QWkJZQN/20251001-111907.jpg" alt="banner">
+      <img class="profile-banner" src="https://files.catbox.moe/91b0ug.jpg" alt="banner">
 
       <div class="profile-info">
         <h2 id="bannerUsername">${username}</h2>
         <p><b>Role:</b> <span id="bannerRole">${userInfo.role}</span></p>
         <p><b>Expired:</b> <span id="bannerExpired">${formattedTime}</span></p>
 
-
+      <a class="telegram" href="https://t.me/+AWHyNl2mX_wwMGVl" target="_blank">
+        🔥 Join our Telegram Channel!
+      </a>
+      <br/>
 <div class="quick-actions">
   <button onclick="showSection('bug-section')">
     <i class="fab fa-whatsapp"></i><br>WhatsApp
@@ -1900,20 +1900,6 @@ input[type="text"] {
 
     <!-- Info Section -->
     <div class="info-cards">
-
-      <div class="card">
-        <h3>Server Stats</h3>
-        <div class="stat"><span>Online Users</span><span id="onlineUsers">0</span></div>
-        <div class="stat"><span>Active Sender</span><span id="activeSender">0</span></div>
-      </div>
-
-      <div class="card">
-        <h3>Team & Credits</h3>
-        <p><b>FazzCodex</b> — Website Builder</p>
-        <p><b>RapzMods</b> — Function</p>
-        <p><b>Coming Soon</b> — My Team</p>
-      </div>
-
       <div class="card">
         <h3>Profile</h3>
         <p><b>Username:</b> <span id="profileUser">${username}</span></p>
@@ -1921,9 +1907,17 @@ input[type="text"] {
         <p><b>Status:</b> <span id="profileStatus">Active</span></p>
       </div>
 
-      <a class="telegram" href="https://t.me/+AWHyNl2mX_wwMGVl" target="_blank">
-        🔥 Join our Telegram Channel!
-      </a>
+
+      <div class="card">
+        <h3>Team & Credits</h3>
+        <p><b>FazzCodex</b> — Website Builder</p>
+        <p><b>RapzMods</b> — Function</p>
+        <p><b>FlowState</b> — My Team</p>
+      </div>
+
+
+
+
     </div>
   </div>
 </section>
@@ -2020,7 +2014,7 @@ input[type="text"] {
   <div class="bottom-inner">
     <div class="nav-item active" onclick="showSection('home-section')"><i class="fa-solid fa-house"></i><div>Home</div></div>
     <div class="nav-item" onclick="showSection('bug-section')"><i class="fa-regular fa-paper-plane"></i><div>Bug</div></div>
-    <div class="nav-item" onclick="showSection('tracking-section')"> <i class="fa-solid fa-cloud"></i> <div>Panel</div></div>
+    <div class="nav-item" onclick="showSection('tracking-section')"> <i class="fa-solid fa-cloud"></i> <div>Track</div></div>
     <div class="nav-item" onclick="showSection('chat-section')"><i class="fa-regular fa-comments"></i><div>Chat</div></div>
   </div>
 </div>
