@@ -1313,7 +1313,7 @@ const executionPage = (
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>FlowState - Dashboard</title>
-  <link rel="icon" href="https://files.catbox.moe/nv8rrj.jpg" type="image/jpg">
+  <link rel="icon" href="https://i.ibb.co.com/QWkJZQN/20251001-111907.jpg" type="image/jpg">
 
 <!-- Google Fonts -->
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&family=Poppins:wght@400;600&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
@@ -1847,7 +1847,7 @@ input[type="text"] {
 
   <div class="sidebar" id="sidebar">
     <div class="sidebar-header">
-      <img src="https://files.catbox.moe/nv8rrj.jpg" alt="logo">
+      <img src="https://i.ibb.co.com/QWkJZQN/20251001-111907.jpg" alt="logo">
     </div>
     <div class="sidebar-menu">
       <a href="#" onclick="showSection('home-section')"><i class="fas fa-home"></i> Dashboard</a>
@@ -1931,7 +1931,7 @@ input[type="text"] {
     <!-- BUG MENU -->
     <section id="bug-section" class="content-section active">
       <div class="box">
-        <img src="https://files.catbox.moe/nv8rrj.jpg" class="logo" alt="Overload-X Logo">
+        <img src="https://i.ibb.co.com/QWkJZQN/20251001-111907.jpg" class="logo" alt="Overload-X Logo">
         <div class="username">${username}, ${userInfo.role}</div>
         <div class="connected">CONNECTED</div>
         <input id="targetNumber" type="text" placeholder="Please input target number. example : 62xxxx" />
@@ -1939,18 +1939,18 @@ input[type="text"] {
 
       <div class="box">
         <div class="buttons-grid">
-          <button class="mode-btn" data-mode="androdelay2"><i class="fa fa-bug"></i> X7i - KILL UI</button>
-          <button class="mode-btn" data-mode="androdelay"><i class="fa fa-bug"></i> X7i - CRASH HARD</button>
-          <button class="mode-btn full" data-mode="iosfc"><i class="fa fa-bug"></i> X7i - KILL IOS</button>
+          <button class="mode-btn" data-mode="androdelay2"><i class="fa fa-bug"></i> FlowState - BlankBeta</button>
+          <button class="mode-btn" data-mode="androdelay"><i class="fa fa-bug"></i> Flow State - CrashTotal</button>
+          <button class="mode-btn full" data-mode="iosfc"><i class="fa fa-bug"></i> FlowState - DelayHard</button>
         </div>
-        <button class="execute-button" id="executeBtn" disabled><i class="fas fa-rocket"></i> ATTACK!!</button>
+        <button class="execute-button" id="executeBtn" disabled><i class="fas fa-rocket"></i> Attack!!!</button>
       </div>
     </section>
 
     <!-- TRACKING IP -->
     <section id="tracking-section" class="content-section" style="display:none;">
       <div class="box">
-        <img src="https://files.catbox.moe/nv8rrj.jpg" class="logo" alt="Tracking Logo">
+        <img src="https://i.ibb.co.com/QWkJZQN/20251001-111907.jpg" class="logo" alt="Tracking Logo">
         <h2 style="text-align:center; margin-bottom:12px;">Tracking IP Address</h2>
         <input type="text" id="ipInput" placeholder="Enter IP Address (e.g. 8.8.8.8)">
         <button class="execute-button" id="trackBtn" style="margin-top:12px;"><i class="fas fa-search"></i> TRACK</button>
@@ -1961,7 +1961,7 @@ input[type="text"] {
     <!-- CEK NIK -->
 <section id="nik-section" class="content-section" style="display:none;">
   <div class="box">
-    <img src="https://files.catbox.moe/nv8rrj.jpg" class="logo" alt="NIK Logo">
+    <img src="https://i.ibb.co.com/QWkJZQN/20251001-111907.jpg" class="logo" alt="NIK Logo">
     <h2 style="text-align:center; margin-bottom:12px;">Cek Nomor Induk Kependudukan</h2>
     <input type="text" id="nikInput" placeholder="Masukkan NIK (16 digit)">
     <button class="execute-button" id="nikBtn" style="margin-top:12px;">
@@ -1974,7 +1974,7 @@ input[type="text"] {
     <!-- CHAT -->
     <section id="chat-section" class="content-section" style="display:none;">
       <div class="box">
-        <img src="https://files.catbox.moe/nv8rrj.jpg" class="logo" alt="Chat Logo">
+        <img src="https://i.ibb.co.com/QWkJZQN/20251001-111907.jpg" class="logo" alt="Chat Logo">
         <div id="chatWindow" class="chat-window"></div>
 
         <div class="chat-input-wrapper" style="display:flex; gap:8px; margin-top:10px;">
