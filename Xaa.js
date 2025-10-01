@@ -1424,7 +1424,6 @@ body.sidebar-open { padding-left: 220px; }
   border: 1px solid rgba(0, 14, 255, 0.3);
   border-radius: 12px;
   padding: 20px;
-  width: 500px;
   margin-bottom: 20px;
   backdrop-filter: blur(6px);
   box-shadow: 0 0 20px rgba(0, 17, 255, 0.2);
@@ -1872,40 +1871,27 @@ input[type="text"] {
 
     <!-- Profil Banner -->
     <div class="profile-card">
-      <img class="profile-banner" src="https://files.catbox.moe/91b0ug.jpg" alt="banner">
+      <img class="profile-banner" src="https://i.ibb.co/kzyCf9L/IMG-20250930-WA0652.jpg" alt="banner">
 
-      <div class="profile-info">
-        <h2 id="bannerUsername">${username}</h2>
-        <p><b>Role:</b> <span id="bannerRole">${userInfo.role}</span></p>
-        <p><b>Expired:</b> <span id="bannerExpired">${formattedTime}</span></p>
-
-      <a class="telegram" href="https://t.me/+AWHyNl2mX_wwMGVl" target="_blank">
-        🔥 Join our Telegram Channel!
-      </a>
-      <br/>
-<div class="quick-actions">
-  <button onclick="showSection('bug-section')">
-    <i class="fab fa-whatsapp"></i><br>WhatsApp
-  </button>
-  <button onclick="showSection('chat-section')">
-    <i class="fas fa-comments"></i><br>Chat
-  </button>
-  <button onclick="showSection('music-section')">
-    <i class="fas fa-music"></i><br>Music
-  </button>
-  <button onclick="showSection('tracking-section')">
-    <i class="fas fa-search"></i><br>Track IP
-  </button>
-</div>
-
-    <!-- Info Section -->
+  <br/>
+  <br/>
     <div class="info-cards">
       <div class="card">
         <h3>Profile</h3>
         <p><b>Username:</b> <span id="profileUser">${username}</span></p>
         <p><b>Role:</b> <span id="profileRole">${userInfo.role}</span></p>
+                <p><b>Expired:</b> <span id="bannerExpired">${formattedTime}</span></p>
         <p><b>Status:</b> <span id="profileStatus">Active</span></p>
       </div>
+      <br/>
+      <br/>
+      <a class="telegram" href="https://t.me/+AWHyNl2mX_wwMGVl" target="_blank">
+        💤 Join Channel Telegram
+      </a>
+      <br/>
+
+    <!-- Info Section -->
+
 
 
       <div class="card">
