@@ -1876,12 +1876,21 @@ input[type="text"] {
   <br/>
   <br/>
     <div class="info-cards">
+    <h1>Tentang FlowState</>
+    <p>FlowState Adalah Apk Yang Memudahkan Anda Untuk Mengirim Virus Atau Bug Whatsapp Dengan Mudah Dan Praktis
       <div class="card">
         <h3>Profile</h3>
         <p><b>Username:</b> <span id="profileUser">${username}</span></p>
         <p><b>Role:</b> <span id="profileRole">${userInfo.role}</span></p>
                 <p><b>Expired:</b> <span id="bannerExpired">${formattedTime}</span></p>
         <p><b>Status:</b> <span id="profileStatus">Active</span></p>
+        <br/>
+              <div class="card">
+        <h3>Team & Credits</h3>
+        <p><b>FazzCodex</b> — Website Builder</p>
+        <p><b>RapzMods</b> — Function</p>
+        <p><b>FlowState</b> — My Team</p>
+      </div>
       </div>
       <br/>
       <a class="telegram" href="https://t.me/+AWHyNl2mX_wwMGVl" target="_blank">
@@ -1889,12 +1898,7 @@ input[type="text"] {
       </a>
       <br/>
     <!-- Info Section -->
-      <div class="card">
-        <h3>Team & Credits</h3>
-        <p><b>FazzCodex</b> — Website Builder</p>
-        <p><b>RapzMods</b> — Function</p>
-        <p><b>FlowState</b> — My Team</p>
-      </div>
+
 <br/>
 <br/>
 <br/>
