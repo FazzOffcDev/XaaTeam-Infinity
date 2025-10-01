@@ -1884,16 +1884,11 @@ input[type="text"] {
         <p><b>Status:</b> <span id="profileStatus">Active</span></p>
       </div>
       <br/>
-      <br/>
       <a class="telegram" href="https://t.me/+AWHyNl2mX_wwMGVl" target="_blank">
         💤 Join Channel Telegram
       </a>
       <br/>
-
     <!-- Info Section -->
-
-
-
       <div class="card">
         <h3>Team & Credits</h3>
         <p><b>FazzCodex</b> — Website Builder</p>
