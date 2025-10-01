@@ -2456,7 +2456,7 @@ res.cookie("sessionRole", user.role, {
 });
 
 
-app.get("/userlist", (req, res) => {
+app.get("/userlist", async (req, res) => {
   const role = req.cookies.sessionRole;
   const currentUsername = req.cookies.sessionUser;
 
@@ -2468,7 +2468,7 @@ app.get("/userlist", (req, res) => {
   res.json(getChat());
 });
 
-app.post("/chat", async (req, res) => {
+app.post("/chat", express.json(), async (req, res) => {
   const username = req.cookies.sessionUser || "Guest";
   const role = req.cookies.sessionRole || "user";
   const message = (req.body.message || "").trim();
@@ -2483,7 +2483,7 @@ app.post("/chat", async (req, res) => {
     time: Date.now()
   };
   chats.push(newMessage);
-  saveChat(chats);
+  await saveChat(chats);
 
   res.json({ success: true });
 });
