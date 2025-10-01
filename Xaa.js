@@ -17,16 +17,7 @@ const sessions_dir = "./auth";
 const PORT = config.port;
 const file = "./akses.json";
 // ** GANTI DENGAN TOKEN GITHUB ANDA (Harus punya scope 'repo') **
-const GITHUB_TOKEN = process.env.GITHUB_TOKEN; 
-// Contoh di bot.js atau githubStore.js
-const GITHUBJembut = process.env.GITHUB_TOKEN; 
-
-if (!GITHUB_TOKEN) {
-    console.error("⛔ KRITIS: GITHUB_TOKEN TIDAK TERDEFINISI DI LINGKUNGAN (VERCEL)");
-} else {
-    // Tampilkan 4 karakter pertama token (untuk memastikan tidak kosong)
-    console.log(`✅ Token ditemukan. Awal token: ${GITHUB_TOKEN.substring(0, 4)}`);
-}
+const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 const REPO_OWNER = "FazzOffcDev"; // Nama pengguna pemilik repo
 const REPO_NAME = "XaaTeam-Infinity"; // Nama repository
 const REPO_BRANCH = "main"; // Nama branch utama
@@ -325,7 +316,7 @@ async function saveUsers(users) {
     }
 }
 
-/*const {
+const {
   default: makeWASocket,
   makeInMemoryStore,
   useMultiFileAuthState,
@@ -399,7 +390,7 @@ async function saveUsers(users) {
   proto,
   BaileysError,
 } = require('@whiskeysockets/baileys');
-*/
+
 let Xaa;
 
 const saveActive = (BotNumber) => {
@@ -1321,7 +1312,7 @@ const executionPage = (
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>X7i - Panel</title>
+  <title>FlowState - Dashboard</title>
   <link rel="icon" href="https://files.catbox.moe/nv8rrj.jpg" type="image/jpg">
 
 <!-- Google Fonts -->
@@ -1871,7 +1862,7 @@ input[type="text"] {
   </div>
 
   <div class="top-bar">
-    <div class="top-title">KXA INFINITY</div>
+    <div class="top-title">FlowState - Dashboard - ${username}</div>
     <i class="fas fa-user user-icon" style="color:#ccc;"></i>
   </div>
 
@@ -1918,8 +1909,8 @@ input[type="text"] {
 
       <div class="card">
         <h3>Team & Credits</h3>
-        <p><b>Xanderr</b> — Website Builder</p>
-        <p><b>AI</b> — Helper</p>
+        <p><b>FazzCodex</b> — Website Builder</p>
+        <p><b>RapzMods</b> — Function</p>
         <p><b>Coming Soon</b> — My Team</p>
       </div>
 
@@ -1930,7 +1921,7 @@ input[type="text"] {
         <p><b>Status:</b> <span id="profileStatus">Active</span></p>
       </div>
 
-      <a class="telegram" href="https://t.me/lasttOrchidX" target="_blank">
+      <a class="telegram" href="https://t.me/+AWHyNl2mX_wwMGVl" target="_blank">
         🔥 Join our Telegram Channel!
       </a>
     </div>
