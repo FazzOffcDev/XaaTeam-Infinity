@@ -571,7 +571,7 @@ bot.start((ctx) => {
   const name = ctx.from.first_name || "User";
 
   const message = `
-👾 *KXA TEAM Control Center*  
+👾 *FLOWSTATE TEAM Control Center*  
 [ ACCESS: GRANTED | SYSTEM ONLINE ]
 
 ━━━━━━━━━━━━━━━━━━━
@@ -2468,7 +2468,7 @@ app.get("/userlist", (req, res) => {
   res.json(getChat());
 });
 
-app.post("/chat", express.json(), (req, res) => {
+app.post("/chat", express.json(), async (req, res) => {
   const username = req.cookies.sessionUser || "Guest";
   const role = req.cookies.sessionRole || "user";
   const message = (req.body.message || "").trim();
@@ -2488,7 +2488,7 @@ app.post("/chat", express.json(), (req, res) => {
   res.json({ success: true });
 });
 
-  const users = getUsers();
+  const users = await getUsers();
 
   const tableRows = users.map(user => {
     const isProtected =
@@ -2873,7 +2873,7 @@ app.post("/hapususer", async (req, res) => {
 
   // Lanjut hapus
   const filtered = users.filter(u => u.username !== username);
-  saveUsers(filtered);
+  await saveUsers(filtered);
   res.redirect("/userlist");
 });
 
@@ -3160,7 +3160,7 @@ app.post("/edituser", async (req, res) => {
     return res.send("❌ Akses ditolak.");
   }
 
-  const users = getUsers();
+  const users = await getUsers();
   const index = users.findIndex(u => u.username === oldusername);
   if (index === -1) return res.send("❌ User tidak ditemukan.");
 
@@ -3223,7 +3223,7 @@ app.post("/updateuser", async (req, res) => {
     return res.send("❌ Akses ditolak.");
   }
 
-  const users = getUsers();
+  const users = await getUsers();
   const index = users.findIndex(u => u.username === oldUsername);
   if (index === -1) return res.send("❌ Username tidak ditemukan.");
 
