@@ -1875,7 +1875,7 @@ input[type="text"] {
 
     <!-- Profil Banner -->
     <div class="profile-card">
-      <img class="profile-banner" src="https://images.unsplash.com/photo-1549880338-65ddcdfd017b?q=80&w=1400&auto=format&fit=crop" alt="banner">
+      <img class="profile-banner" src="https://i.ibb.co.com/QWkJZQN/20251001-111907.jpg" alt="banner">
 
       <div class="profile-info">
         <h2 id="bannerUsername">${username}</h2>
