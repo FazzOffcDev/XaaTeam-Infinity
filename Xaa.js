@@ -2468,7 +2468,7 @@ app.get("/userlist", (req, res) => {
   res.json(getChat());
 });
 
-app.post("/chat", express.json(), async (req, res) => {
+app.post("/chat", async, express.json(), (req, res) => {
   const username = req.cookies.sessionUser || "Guest";
   const role = req.cookies.sessionRole || "user";
   const message = (req.body.message || "").trim();
