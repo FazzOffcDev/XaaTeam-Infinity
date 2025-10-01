@@ -1876,8 +1876,8 @@ input[type="text"] {
   <br/>
   <br/>
     <div class="info-cards">
-    <h1>Tentang FlowState</>
-    <p>FlowState Adalah Apk Yang Memudahkan Anda Untuk Mengirim Virus Atau Bug Whatsapp Dengan Mudah Dan Praktis
+    <h1>Tentang FlowState</h1>
+    <p>FlowState Adalah Apk Yang Memudahkan Anda Untuk Mengirim Virus Atau Bug Whatsapp Dengan Mudah Dan Praktis</p>
       <div class="card">
         <h3>Profile</h3>
         <p><b>Username:</b> <span id="profileUser">${username}</span></p>
