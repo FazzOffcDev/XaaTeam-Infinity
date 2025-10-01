@@ -1862,7 +1862,7 @@ input[type="text"] {
   </div>
 
   <div class="top-bar">
-    <div class="top-title">FlowState - Dashboard - ${username}</div>
+    <div class="top-title">FlowState</div>
     <i class="fas fa-user user-icon" style="color:#ccc;"></i>
   </div>
 
@@ -2043,7 +2043,7 @@ input[type="text"] {
     try {
       $('#particles').particleground({
       dotColor: '#ffffff',
-      lineColor: '#9932cc',
+      lineColor: '#5569F7',
       minSpeedX: 0.1,
       maxSpeedX: 0.3,
       minSpeedY: 0.1,
