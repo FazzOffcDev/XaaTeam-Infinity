@@ -7,7 +7,7 @@
     "start": "node Xaa.js"
   },
   "dependencies": {
-        "@whiskeysockets/baileys": "github:seiren-primrose/PL-Baileys",
+        "@whiskeysockets/baileys": "npm:@zieee/baileys",
        "fs": "latest",
         "chalk": "^4.1.2",
         "moment": "^2.29.1",
